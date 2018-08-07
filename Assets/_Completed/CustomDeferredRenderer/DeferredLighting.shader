@@ -1,4 +1,4 @@
-﻿Shader "SIGGRAPH Studio/DeferredLighting"
+﻿Shader "Hidden/SIGGRAPH Studio/DeferredLighting"
 {
     SubShader
     {
