@@ -19,7 +19,7 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             m_GBufferAlbedo = new RenderPassAttachment(RenderTextureFormat.ARGB32);
             m_GBufferSpecRough = new RenderPassAttachment(RenderTextureFormat.ARGB32);
             m_GBufferNormal = new RenderPassAttachment(RenderTextureFormat.ARGB2101010);
-            m_CameraTarget = new RenderPassAttachment(RenderTextureFormat.DefaultHDR);
+            m_CameraTarget = new RenderPassAttachment(RenderTextureFormat.ARGB32);
             m_DepthAttachment = new RenderPassAttachment(RenderTextureFormat.Depth);
 
             m_DeferredShadingMaterial = CoreUtils.CreateEngineMaterial(Shader.Find("SIGGRAPH Studio/DeferredLighting"));
@@ -34,7 +34,7 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             Camera camera = renderingData.cameraData.camera;
             m_CameraTarget.BindSurface(BuiltinRenderTextureType.CameraTarget, false, true);
 
-            context.SetupCameraProperties(renderingData.cameraData.camera, renderingData.cameraData.isStereoEnabled);
+            context.SetupCameraProperties(renderingData.cameraData.camera, false);
 
             using (RenderPass rp = new RenderPass(context, camera.pixelWidth, camera.pixelHeight, 1,
                 new[] {m_GBufferAlbedo, m_GBufferSpecRough, m_GBufferNormal, m_CameraTarget}, m_DepthAttachment))
@@ -60,7 +60,7 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             var drawSettings = new DrawRendererSettings(camera, new ShaderPassName("GBuffer Pass"))
             {
                 sorting = {flags = SortFlags.CommonOpaque},
-                rendererConfiguration = RendererConfiguration.PerObjectLightmaps | RendererConfiguration.PerObjectLightProbe,
+                rendererConfiguration = RendererConfiguration.PerObjectReflectionProbes | RendererConfiguration.PerObjectLightmaps | RendererConfiguration.PerObjectLightProbe,
             };
 
             var filterSettings = new FilterRenderersSettings(true)

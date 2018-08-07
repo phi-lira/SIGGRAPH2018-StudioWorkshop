@@ -49,17 +49,10 @@ Shader "SIGGRAPH Studio/Physically Based Deferred"
 
     SubShader
     {
-        // Lightweight Pipeline tag is required. If Lightweight pipeline is not set in the graphics settings
-        // this Subshader will fail. One can add a subshader below or fallback to Standard built-in to make this
-        // material work with both Lightweight Pipeline and Builtin Unity Pipeline
-        Tags{"RenderType" = "Opaque" "RenderPipeline" = "LightweightPipeline" "IgnoreProjector" = "True"}
-        LOD 300
+        Tags{"RenderPipeline" = "LightweightPipeline"}
 
         Pass
         {
-            // Lightmode matches the ShaderPassName set in LightweightPipeline.cs. SRPDefaultUnlit and passes with
-            // no LightMode tag are also rendered by Lightweight Pipeline
-            Name "Deferred Lit"
             Tags{"LightMode" = "GBuffer Pass"}
 
             Blend[_SrcBlend][_DstBlend]
@@ -83,20 +76,9 @@ Shader "SIGGRAPH Studio/Physically Based Deferred"
             #pragma shader_feature _RECEIVE_SHADOWS_OFF
 
             // -------------------------------------
-            // Lightweight Pipeline keywords
-            #pragma multi_compile _ _ADDITIONAL_LIGHTS
-            #pragma multi_compile _ _VERTEX_LIGHTS
-            #pragma multi_compile _ _MIXED_LIGHTING_SUBTRACTIVE
-            #pragma multi_compile _ _SHADOWS_ENABLED
-            #pragma multi_compile _ _LOCAL_SHADOWS_ENABLED
-            #pragma multi_compile _ _SHADOWS_SOFT
-            #pragma multi_compile _ _SHADOWS_CASCADE
-
-            // -------------------------------------
             // Unity defined keywords
             #pragma multi_compile _ DIRLIGHTMAP_COMBINED
             #pragma multi_compile _ LIGHTMAP_ON
-            #pragma multi_compile_fog
 
             //--------------------------------------
             // GPU Instancing
@@ -114,8 +96,6 @@ Shader "SIGGRAPH Studio/Physically Based Deferred"
                 out half4 GBuffer2 : SV_Target2,
                 out half4 GBuffer3 : SV_Target3)
             {
-                UNITY_SETUP_INSTANCE_ID(IN);
-
                 SurfaceData surfaceData;
                 InitializeStandardLitSurfaceData(IN.uv, surfaceData);
 

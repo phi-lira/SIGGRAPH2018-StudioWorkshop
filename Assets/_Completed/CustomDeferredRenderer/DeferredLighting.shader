@@ -15,17 +15,6 @@ Shader "SIGGRAPH Studio/DeferredLighting"
 
             HLSLPROGRAM
             #pragma exclude_renderers gles d3d11_9x
-            #pragma enable_d3d11_debug_symbols
-
-            // -------------------------------------
-            // Lightweight Pipeline keywords
-            #pragma multi_compile _ _ADDITIONAL_LIGHTS
-            #pragma multi_compile _ _VERTEX_LIGHTS
-            #pragma multi_compile _ _MIXED_LIGHTING_SUBTRACTIVE
-            #pragma multi_compile _ _SHADOWS_ENABLED
-            #pragma multi_compile _ _LOCAL_SHADOWS_ENABLED
-            #pragma multi_compile _ _SHADOWS_SOFT
-            #pragma multi_compile _ _SHADOWS_CASCADE
 
             #pragma vertex Vertex
             #pragma fragment Fragment
@@ -50,8 +39,8 @@ Shader "SIGGRAPH Studio/DeferredLighting"
                 float depth = UNITY_READ_FRAMEBUFFER_INPUT(3, pos).r;
 
                 float2 positionNDC = pos.xy * _ScreenSize.zw;
-
                 float3 positionWS = ComputeWorldSpacePosition(positionNDC, depth, UNITY_MATRIX_I_VP);
+
                 half3 viewDirection = half3(normalize(GetCameraPositionWS() - positionWS));
 
                 Light mainLight = GetMainLight();
