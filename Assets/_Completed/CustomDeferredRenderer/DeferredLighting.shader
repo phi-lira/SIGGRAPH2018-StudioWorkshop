@@ -1,4 +1,4 @@
-Shader "SIGGRAPH Studio/DeferredLighting"
+﻿Shader "SIGGRAPH Studio/DeferredLighting"
 {
     SubShader
     {
@@ -26,6 +26,30 @@ Shader "SIGGRAPH Studio/DeferredLighting"
             UNITY_DECLARE_FRAMEBUFFER_INPUT_FLOAT(2); // Normal
             UNITY_DECLARE_FRAMEBUFFER_INPUT_FLOAT(3); // Depth
 
+            half BDRF(half roughness, half3 normalWS, half3 lightDirectionWS, half3 viewDirectionWS)
+            {
+                half3 halfDir = SafeNormalize(lightDirectionWS + viewDirectionWS);
+
+                half NoH = saturate(dot(normalWS, halfDir));
+                half LoH = saturate(dot(lightDirectionWS, halfDir));
+
+                // GGX Distribution multiplied by combined approximation of Visibility and Fresnel
+                // BRDFspec = (D * V * F) / 4.0
+                // D = roughness² / ( NoH² * (roughness² - 1) + 1 )²
+                // V * F = 1.0 / ( LoH² * (roughness + 0.5) )
+                // See "Optimizing PBR for Mobile" from Siggraph 2015 moving mobile graphics course
+                // https://community.arm.com/events/1155
+
+                // Final BRDFspec = roughness² / ( NoH² * (roughness² - 1) + 1 )² * (LoH² * (roughness + 0.5) * 4.0)
+                half roughness2 = roughness * roughness;
+                half d = NoH * NoH * (roughness2 - 1.0h) + 1.0h;
+                half d2 = d * d;
+
+                half LoH2 = max(0.1h, LoH * LoH);
+                half reflectance = roughness2 / (d2 * LoH2 * (roughness + 0.5) * 4.0h);
+                return reflectance;
+            }
+
             float4 Vertex(float4 vertexPosition : POSITION) : SV_POSITION
             {
                 return vertexPosition;
@@ -44,14 +68,15 @@ Shader "SIGGRAPH Studio/DeferredLighting"
                 half3 viewDirection = half3(normalize(GetCameraPositionWS() - positionWS));
 
                 Light mainLight = GetMainLight();
-                BRDFData brdfData = (BRDFData)0;
-                brdfData.diffuse = albedoOcclusion.rgb;
-                brdfData.specular = specRoughness.rgb;
-                brdfData.normalizationTerm = specRoughness.a * 4.0h + 2.0h;
-                brdfData.roughness2 = specRoughness.a * specRoughness.a;
-                brdfData.roughness2MinusOne = brdfData.roughness2 - 1.0h;
+                half3 diffuse = albedoOcclusion.rgb;
+                half3 specular = specRoughness.rgb;
+                half roughness = specRoughness.a;
 
-                return half4(LightingPhysicallyBased(brdfData, mainLight, normalWS, viewDirection), 1.0);
+                half NdotL = saturate(dot(normalWS, mainLight.direction));
+                half3 radiance = mainLight.color * (mainLight.attenuation * NdotL);
+                half reflectance = BDRF(roughness, normalWS, mainLight.direction, viewDirection);
+                half3 color = (diffuse + specular * reflectance) * radiance;
+                return half4(color, 1.0);
             }
             ENDHLSL
         }
