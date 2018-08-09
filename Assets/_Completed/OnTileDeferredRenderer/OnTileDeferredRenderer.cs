@@ -1,7 +1,7 @@
 namespace UnityEngine.Experimental.Rendering.LightweightPipeline
 {
     [ExecuteInEditMode]
-    public class CustomDeferredRenderer : MonoBehaviour, IRendererSetup
+    public class OnTileDeferredRenderer : MonoBehaviour, IRendererSetup
     {
         GBufferAndLightingPass m_GBufferAndLightingPass;
 
@@ -21,8 +21,6 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             renderer.Clear();
             renderer.EnqueuePass(m_GBufferAndLightingPass);
         }
-
-
     }
 }
 
