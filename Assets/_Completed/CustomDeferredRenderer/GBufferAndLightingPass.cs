@@ -19,10 +19,10 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
             m_GBufferAlbedo = new RenderPassAttachment(RenderTextureFormat.ARGB32);
             m_GBufferSpecRough = new RenderPassAttachment(RenderTextureFormat.ARGB32);
             m_GBufferNormal = new RenderPassAttachment(RenderTextureFormat.ARGB2101010);
-            m_CameraTarget = new RenderPassAttachment(RenderTextureFormat.ARGB32);
+            m_CameraTarget = new RenderPassAttachment(RenderTextureFormat.ARGBHalf);
             m_DepthAttachment = new RenderPassAttachment(RenderTextureFormat.Depth);
 
-            m_DeferredShadingMaterial = CoreUtils.CreateEngineMaterial(Shader.Find("SIGGRAPH Studio/DeferredLighting"));
+            m_DeferredShadingMaterial = CoreUtils.CreateEngineMaterial(Shader.Find("Hidden/SIGGRAPH Studio/DeferredLighting"));
 
             m_CameraTarget.Clear(Color.black);
             m_DepthAttachment.Clear(Color.black);
