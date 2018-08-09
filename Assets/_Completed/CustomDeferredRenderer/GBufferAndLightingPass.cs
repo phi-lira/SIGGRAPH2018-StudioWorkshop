@@ -14,6 +14,9 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
         Material m_DeferredShadingMaterial;
         MaterialPropertyBlock m_LightPropertiesBlock = new MaterialPropertyBlock();
 
+        int m_CameraColorTexture;
+        RenderTargetIdentifier m_CameraRT;
+
         public GBufferAndLightingPass()
         {
             m_GBufferAlbedo = new RenderPassAttachment(RenderTextureFormat.ARGB32);
@@ -26,13 +29,28 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
 
             m_CameraTarget.Clear(Color.black);
             m_DepthAttachment.Clear(Color.black);
+
+            m_CameraColorTexture = Shader.PropertyToID("_CameraColorTexture");
+            m_CameraRT = new RenderTargetIdentifier(m_CameraColorTexture);
         }
 
         public override void Execute(ScriptableRenderer renderer, ref ScriptableRenderContext context,
             ref CullResults cullResults, ref RenderingData renderingData)
         {
             Camera camera = renderingData.cameraData.camera;
-            m_CameraTarget.BindSurface(BuiltinRenderTextureType.CameraTarget, false, true);
+
+            RenderTargetIdentifier cameraRT = BuiltinRenderTextureType.CameraTarget;
+            if (camera.cameraType == CameraType.SceneView)
+            {
+                CommandBuffer cmd = CommandBufferPool.Get("Create Textures");
+                cmd.GetTemporaryRT(m_CameraColorTexture, camera.pixelWidth, camera.pixelHeight, 32, FilterMode.Point);
+                context.ExecuteCommandBuffer(cmd);
+                context.Submit();
+                CommandBufferPool.Release(cmd);
+                cameraRT = m_CameraRT;
+            }
+
+            m_CameraTarget.BindSurface(cameraRT, false, true);
 
             context.SetupCameraProperties(renderingData.cameraData.camera, false);
 
@@ -50,6 +68,20 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
                 {
                     RenderDeferredLights(ref context, ref cullResults, ref renderingData.lightData);
                 }
+
+                using (new RenderPass.SubPass(rp, new[] {m_CameraTarget}, null))
+                {
+                    context.DrawSkybox(camera);
+                }
+            }
+
+            if (cameraRT != BuiltinRenderTextureType.CameraTarget)
+            {
+                CommandBuffer blitCmd = CommandBufferPool.Get("Final Blit");
+                blitCmd.Blit(m_CameraRT, BuiltinRenderTextureType.CameraTarget);
+                blitCmd.SetRenderTarget(BuiltinRenderTextureType.CameraTarget);
+                context.ExecuteCommandBuffer(blitCmd);
+                CommandBufferPool.Release(blitCmd);
             }
         }
 
