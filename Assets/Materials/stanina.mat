@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: kabel
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_Name: stanina
+  m_Shader: {fileID: 4800000, guid: 755b2b55ebbe55b428797ba963ad49a6, type: 3}
   m_ShaderKeywords: _METALLICGLOSSMAP _METALLICSPECGLOSSMAP _NORMALMAP _OCCLUSIONMAP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -20,7 +20,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 4245a7ddc9cca45d68b486af63a9cbde, type: 3}
+        m_Texture: {fileID: 2800000, guid: 3306436e15e7d47fe84ed7e33742ad57, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Cube:
@@ -44,19 +44,19 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: f808254f8f2af4f88808537170fd5d73, type: 3}
+        m_Texture: {fileID: 2800000, guid: 62b41fb18dd714c5ca694cc45bbb5728, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
-        m_Texture: {fileID: 2800000, guid: 02e0bc23070b745d0b3de33f165d1162, type: 3}
+        m_Texture: {fileID: 2800000, guid: e308d40f1604f4881a9df0532361d04e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicSpecGlossMap:
-        m_Texture: {fileID: 2800000, guid: 02e0bc23070b745d0b3de33f165d1162, type: 3}
+        m_Texture: {fileID: 2800000, guid: e308d40f1604f4881a9df0532361d04e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _OcclusionMap:
-        m_Texture: {fileID: 2800000, guid: 0c2914dc0ec5d47bfa09738fe012c4c3, type: 3}
+        m_Texture: {fileID: 2800000, guid: b636de3e8d063421ca972d435acf3ee5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
