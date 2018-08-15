@@ -6,11 +6,11 @@ namespace UnityEngine.Experimental.Rendering.LightweightPipeline
     [ExecuteInEditMode]
     public class MyDeferredRendererCompleted : MonoBehaviour, IRendererSetup 
     {
-        MyGBufferAndLightingPass m_RenderPass;
+        MyGBufferAndLightingPassCompleted m_RenderPass;
 
         public void OnEnable()
         {
-            m_RenderPass = new MyGBufferAndLightingPass();
+            m_RenderPass = new MyGBufferAndLightingPassCompleted();
         }
 
         public void Setup(ScriptableRenderer renderer, ref ScriptableRenderContext context, ref CullResults cullResults, ref RenderingData renderingData)
